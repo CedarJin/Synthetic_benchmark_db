@@ -21,6 +21,7 @@ downstream benchmark evaluation work belongs in the later NIP-M workflow.
 - `configs/benchmark_v0.1.yaml`: versioned generation config for the first pilot dataset.
 - `scripts/generate_benchmark.py`: end-to-end dataset generation example.
 - `docs/DATASET_SCHEMA.md`: generated dataset file layout.
+- `docs/DATASET_CARD.md`: v0.1 dataset source, configuration, validation, and limitations.
 - `docs/SMOKE_TEST.md`: latest real-FNDDS smoke test notes.
 - `docs/PROJECT_SCOPE.md`: current project boundary and next priorities.
 - `docs/INGREDIENT_NAME_AUDIT_V0.1.md`: ingredient-name normalization audit.

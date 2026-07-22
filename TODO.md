@@ -18,7 +18,7 @@
 - [x] Add a dataset schema reference for generated sample directories.
 - [x] Add known limitations for FDA claim logic, Nutrition Facts rounding, and allergen rules.
 - [x] Generate a larger real-FNDDS pilot dataset and inspect artifact quality.
-- [ ] Add a dataset card with source, generation settings, validation coverage, and limitations.
+- [x] Add a dataset card with source, generation settings, validation coverage, and limitations.
 - [ ] Add regression fixtures for representative generated JSON/text outputs.
 - [ ] Expand ingredient-name lexicon from the v0.1 audit.
 

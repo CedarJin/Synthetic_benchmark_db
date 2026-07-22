@@ -29,6 +29,7 @@ Implementation and project setup:
 - Expanded `README.md` with install, quality-check, generation, output, and limitation
   notes.
 - Added `docs/DATASET_SCHEMA.md`.
+- Added `docs/DATASET_CARD.md`.
 - Added `docs/SMOKE_TEST.md`.
 - Added `docs/PROJECT_SCOPE.md`.
 - Replaced the default example script with `scripts/generate_benchmark.py`.
@@ -170,8 +171,6 @@ repository. Those are downstream NIP-M responsibilities.
 
 The main remaining work is dataset release readiness:
 
-- Add a dataset card covering source data, generation settings, validation coverage, and known
-  limitations.
 - Add regression fixtures from representative generated samples.
 - Expand the ingredient-name lexicon using `docs/INGREDIENT_NAME_AUDIT_V0.1.md`.
 - Decide whether `../NuSol-T` should remain a local path dependency or become a package/Git
@@ -182,8 +181,7 @@ The main remaining work is dataset release readiness:
 
 ## Recommended Next Step
 
-Create the first release-oriented documentation and fixture set:
+Create the first release-oriented fixture and handoff set:
 
-1. Add a dataset card for `benchmark_v0.1`.
-2. Add fixture snapshots from representative generated samples.
-3. Freeze the schema contract that NIP-M will consume next.
+1. Add fixture snapshots from representative generated samples.
+2. Freeze the schema contract that NIP-M will consume next.

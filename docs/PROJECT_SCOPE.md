@@ -55,8 +55,7 @@ for NIP-M as long as the generated artifacts and ground truth are stable and wel
 
 ## Remaining Risks
 
-- The dataset release process is not yet formalized with versioned configs, checksums, and data
-  cards.
+- The dataset release process still needs packaged artifacts, checksums, and fixture snapshots.
 - Only small real-FNDDS smoke runs have been inspected so far.
 - FDA-style claim, rounding, and allergen rules are simplified and need another publication-readiness
   review.
@@ -65,8 +64,6 @@ for NIP-M as long as the generated artifacts and ground truth are stable and wel
 
 ## Recommended Next Work
 
-1. Add a dataset card documenting source data, generation settings, validation coverage, and known
-   limitations.
-2. Add regression fixtures for representative generated samples.
-3. Stabilize the ground-truth schema for the NIP-M handoff.
-4. Package a release artifact with manifest, schema version, and checksums.
+1. Add regression fixtures for representative generated samples.
+2. Stabilize the ground-truth schema for the NIP-M handoff.
+3. Package a release artifact with manifest, schema version, and checksums.
