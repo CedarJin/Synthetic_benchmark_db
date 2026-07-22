@@ -32,6 +32,7 @@ Implementation and project setup:
 - Added `docs/SMOKE_TEST.md`.
 - Added `docs/PROJECT_SCOPE.md`.
 - Replaced the default example script with `scripts/generate_benchmark.py`.
+- Added `configs/benchmark_v0.1.yaml` as the first versioned generation config.
 
 Validation and semantic fixes:
 
@@ -150,8 +151,7 @@ repository. Those are downstream NIP-M responsibilities.
 
 The main remaining work is dataset release readiness:
 
-- Add a versioned generation config under `configs/`.
-- Generate and inspect a larger real-FNDDS pilot dataset.
+- Generate and inspect a larger real-FNDDS pilot dataset with `configs/benchmark_v0.1.yaml`.
 - Add a dataset card covering source data, generation settings, validation coverage, and known
   limitations.
 - Add regression fixtures from representative generated samples.
@@ -165,8 +165,7 @@ The main remaining work is dataset release readiness:
 
 Create the first release-oriented dataset generation workflow:
 
-1. Add a checked-in generation config under `configs/`.
-2. Run a larger real-FNDDS pilot generation with that config.
-3. Inspect generated labels, validation reports, and ground truth files.
-4. Add a dataset card and fixture snapshots from representative samples.
-5. Freeze the schema contract that NIP-M will consume next.
+1. Run a larger real-FNDDS pilot generation with `configs/benchmark_v0.1.yaml`.
+2. Inspect generated labels, validation reports, and ground truth files.
+3. Add a dataset card and fixture snapshots from representative samples.
+4. Freeze the schema contract that NIP-M will consume next.

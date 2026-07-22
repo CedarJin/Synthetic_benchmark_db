@@ -64,10 +64,9 @@ for NIP-M as long as the generated artifacts and ground truth are stable and wel
 
 ## Recommended Next Work
 
-1. Add a versioned generation config under `configs/`.
-2. Generate and inspect a larger real-FNDDS pilot dataset.
-3. Add a dataset card documenting source data, generation settings, validation coverage, and known
+1. Generate and inspect a larger real-FNDDS pilot dataset using `configs/benchmark_v0.1.yaml`.
+2. Add a dataset card documenting source data, generation settings, validation coverage, and known
    limitations.
-4. Add regression fixtures for representative generated samples.
-5. Stabilize the ground-truth schema for the NIP-M handoff.
-6. Package a release artifact with manifest, schema version, and checksums.
+3. Add regression fixtures for representative generated samples.
+4. Stabilize the ground-truth schema for the NIP-M handoff.
+5. Package a release artifact with manifest, schema version, and checksums.

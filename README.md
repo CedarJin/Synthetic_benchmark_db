@@ -17,6 +17,7 @@ downstream benchmark evaluation work belongs in the later NIP-M workflow.
 - `src/synth_bench/validation/`: validation rules and report generation.
 - `src/synth_bench/pipeline/`: dataset generation and splitting.
 - `src/synth_bench/benchmark/`: reference-only baseline utilities for development smoke checks.
+- `configs/benchmark_v0.1.yaml`: versioned generation config for the first pilot dataset.
 - `scripts/generate_benchmark.py`: end-to-end dataset generation example.
 - `docs/DATASET_SCHEMA.md`: generated dataset file layout.
 - `docs/SMOKE_TEST.md`: latest real-FNDDS smoke test notes.
@@ -65,12 +66,12 @@ Use the example script with an FNDDS survey JSON:
 
 ```bash
 uv run python scripts/generate_benchmark.py \
-  --fndds-path ../db/FoodData_Central_survey_food_json_2024-10-31/surveyDownload.json \
-  --output-dir data/example_benchmark \
-  --n-samples 20 \
-  --max-workers 1 \
+  --config configs/benchmark_v0.1.yaml \
   --overwrite
 ```
+
+Command-line options such as `--n-samples`, `--output-dir`, and `--fndds-path` can override config
+values for local smoke runs.
 
 The script:
 
@@ -80,6 +81,7 @@ The script:
 4. Writes sample directories and `samples.csv`.
 5. Creates train/validation/test split files.
 6. Writes `generation_summary.json`.
+7. Writes `generation_config.json` with the source and effective config.
 
 ## Programmatic Usage
 

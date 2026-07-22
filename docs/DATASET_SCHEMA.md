@@ -8,6 +8,7 @@ dataset_root/
   manifest.json
   samples.csv
   generation_summary.json        # only when produced by the example script
+  generation_config.json         # only when produced by the example script
   splits/
     train.txt
     val.txt
@@ -44,6 +45,23 @@ dataset_root/
 `splits/*.txt`
 
 Each line is a `sample_id`. Splits are grouped by original FDC ID to avoid leakage.
+
+`generation_summary.json`
+
+Generation and validation summary produced by `scripts/generate_benchmark.py`:
+
+- Generation total, successful, failed, and success rate.
+- Validation reports, all-passed count, and failed count.
+- Per-sample generation failures, if any.
+- Dataset version and config path, when generated from a versioned config.
+
+`generation_config.json`
+
+Config snapshot produced by `scripts/generate_benchmark.py`:
+
+- `config_path`: source config path, when provided.
+- `source_config`: checked-in config values loaded from YAML.
+- `effective_config`: final values after command-line overrides.
 
 ## Sample Files
 

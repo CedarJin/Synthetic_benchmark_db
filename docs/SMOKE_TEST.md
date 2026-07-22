@@ -4,10 +4,9 @@ Smoke test run from local FNDDS survey data:
 
 ```bash
 PYTHONPATH=src .venv/bin/python scripts/generate_benchmark.py \
-  --fndds-path ../db/FoodData_Central_survey_food_json_2024-10-31/surveyDownload.json \
+  --config configs/benchmark_v0.1.yaml \
   --output-dir /tmp/synth_bench_smoke_50 \
   --n-samples 50 \
-  --max-workers 1 \
   --overwrite
 ```
 
@@ -27,6 +26,7 @@ The output directory contained the expected dataset-level files and per-sample f
 - `manifest.json`
 - `samples.csv`
 - `generation_summary.json`
+- `generation_config.json`
 - `splits/train.txt`, `splits/val.txt`, `splits/test.txt`
 - `sample_*/canonical_food.json`
 - `sample_*/ground_truth.json`
