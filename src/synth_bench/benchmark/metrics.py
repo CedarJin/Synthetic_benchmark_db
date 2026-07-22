@@ -1,11 +1,11 @@
-"""Evaluation metrics for ingredient parsing and mapping.
+"""Reference-only metrics for ingredient parsing and mapping smoke checks.
 
-Parsing Metrics (Module 5 — Ingredient Parsing):
+Parsing metrics:
   - Precision, Recall, F1 for token/span-level ingredient detection
   - Exact Match for full ingredient list accuracy
   - Intersection over Union (IoU) for ingredient set overlap
 
-Mapping Metrics (Module 5 — Ingredient Mapping):
+Mapping metrics:
   - Recall@K: whether correct target is in top-K predictions
   - Mean Reciprocal Rank (MRR): average of 1/rank
   - Exact Match Rate: fraction of exact target matches

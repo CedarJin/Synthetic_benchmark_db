@@ -1,4 +1,4 @@
-"""End-to-end example: generate a benchmark dataset and run baselines."""
+"""Generate a synthetic benchmark dataset from FNDDS records."""
 
 from __future__ import annotations
 
@@ -8,14 +8,17 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from synth_bench.benchmark.evaluator import BenchmarkEvaluator
-from synth_bench.pipeline.generator import DatasetGenerator, GeneratorConfig
+from synth_bench.pipeline.generator import (
+    DatasetGenerator,
+    GenerationResult,
+    GeneratorConfig,
+)
 from synth_bench.pipeline.split import split_dataset
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Generate a small synthetic benchmark dataset and evaluate baselines.",
+        description="Generate a synthetic benchmark dataset.",
     )
     parser.add_argument(
         "--fndds-path",
@@ -43,6 +46,39 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def build_summary(results: list[GenerationResult]) -> dict[str, Any]:
+    successful = [result for result in results if result.success]
+    failed = [result for result in results if not result.success]
+    validation_reports = [
+        result.sample.validation
+        for result in successful
+        if result.sample is not None and result.sample.validation is not None
+    ]
+    validation_passed = sum(1 for report in validation_reports if report.get("all_passed"))
+
+    return {
+        "generation": {
+            "total": len(results),
+            "successful": len(successful),
+            "failed": len(failed),
+            "success_rate": round(len(successful) / len(results), 4) if results else 0.0,
+        },
+        "validation": {
+            "reports": len(validation_reports),
+            "all_passed": validation_passed,
+            "failed": len(validation_reports) - validation_passed,
+        },
+        "failures": [
+            {
+                "sample_id": result.sample_id,
+                "fdc_id": result.fdc_id,
+                "error": result.error,
+            }
+            for result in failed
+        ],
+    }
+
+
 def main() -> None:
     args = parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
@@ -67,26 +103,13 @@ def main() -> None:
     splits = list(split_dataset(generator.samples, seed=args.seed))
     output_dir = generator.write_dataset(splits=splits)
 
-    evaluator = BenchmarkEvaluator()
-    evaluator.load_dataset(output_dir)
-    parsing_report = evaluator.run_parsing_baseline()
-    mapping_report = evaluator.run_mapping_baseline()
-
-    summary: dict[str, Any] = {
-        "generation": {
-            "total": len(results),
-            "successful": sum(1 for result in results if result.success),
-            "failed": sum(1 for result in results if not result.success),
-        },
-        "parsing_baseline": parsing_report.summary(),
-        "mapping_baseline": mapping_report.summary(),
-    }
-    summary_path = output_dir / "evaluation_summary.json"
+    summary = build_summary(results)
+    summary_path = output_dir / "generation_summary.json"
     summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
     print(json.dumps(summary, indent=2))
     print(f"Wrote dataset to: {output_dir}")
-    print(f"Wrote evaluation summary to: {summary_path}")
+    print(f"Wrote generation summary to: {summary_path}")
 
 
 if __name__ == "__main__":

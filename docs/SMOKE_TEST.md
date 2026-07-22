@@ -3,7 +3,7 @@
 Smoke test run from local FNDDS survey data:
 
 ```bash
-PYTHONPATH=src .venv/bin/python scripts/example_generate_and_evaluate.py \
+PYTHONPATH=src .venv/bin/python scripts/generate_benchmark.py \
   --fndds-path ../db/FoodData_Central_survey_food_json_2024-10-31/surveyDownload.json \
   --output-dir /tmp/synth_bench_smoke_50 \
   --n-samples 50 \
@@ -26,7 +26,7 @@ The output directory contained the expected dataset-level files and per-sample f
 
 - `manifest.json`
 - `samples.csv`
-- `evaluation_summary.json`
+- `generation_summary.json`
 - `splits/train.txt`, `splits/val.txt`, `splits/test.txt`
 - `sample_*/canonical_food.json`
 - `sample_*/ground_truth.json`
@@ -37,7 +37,10 @@ The output directory contained the expected dataset-level files and per-sample f
 - `sample_*/validation.json`
 - `sample_*/metadata.json`
 
-## Baseline Summary
+## Reference-Only Baseline Summary
+
+These numbers came from the older development smoke workflow. They are not success criteria for
+this repository because parsing and mapping are downstream NIP-M responsibilities.
 
 Parsing baseline:
 
@@ -72,6 +75,4 @@ cleanly after these fixes:
 ## Interpretation
 
 The smoke test confirms the end-to-end pipeline runs on real FNDDS data, writes the expected
-dataset structure, and passes the current validation rules on a 50-sample real-data run. The weak
-baseline scores are expected for simple regex/dictionary baselines and should be treated as a
-reference floor, not a target.
+dataset structure, and passes the current validation rules on a 50-sample real-data run.

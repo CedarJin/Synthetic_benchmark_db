@@ -1,7 +1,7 @@
-"""Simple baseline methods for ingredient parsing and mapping.
+"""Reference-only baseline methods for ingredient parsing and mapping.
 
-These serve as reference points for evaluating parsing/mapping quality.
-They are intentionally simple — not production-grade.
+These are retained for local smoke checks and legacy experiments. Parsing and mapping algorithm
+development belongs in the downstream NIP-M workflow.
 """
 
 from __future__ import annotations

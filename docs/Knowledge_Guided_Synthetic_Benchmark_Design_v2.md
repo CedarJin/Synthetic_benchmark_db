@@ -3,6 +3,9 @@
 ## Unified Project & Technical Design Document (v2)
 
 > Scope: This document focuses on Modules 1–5 (benchmark generation, parsing and mapping). Downstream optimization and nutrient reconstruction are summarized only briefly.
+>
+> Current repository note: `Synthetic_benchmark_db` now owns benchmark dataset generation only.
+> Parsing, mapping, and downstream model evaluation are planned NIP-M responsibilities.
 
 ---
 

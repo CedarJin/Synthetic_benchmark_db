@@ -1,1 +1,1 @@
-"""Module 5: Parsing & Mapping Benchmark — evaluation infrastructure."""
+"""Reference-only parsing and mapping evaluation utilities."""

@@ -1,4 +1,7 @@
-"""Benchmark evaluator — run evaluation of parsers and mappers.
+"""Reference-only evaluator for parser and mapper smoke checks.
+
+Parsing and mapping model work is out of scope for this repository. These utilities are retained
+for local diagnostics and legacy experiments.
 
 Usage::
 

@@ -1,10 +1,12 @@
 # Synthetic Benchmark DB
 
-Knowledge-guided synthetic benchmark generation for ingredient parsing and mapping.
+Knowledge-guided synthetic benchmark dataset generation.
 
-The project converts FNDDS survey food records into canonical recipe objects, applies
+This repository is scoped to producing benchmark dataset artifacts from FNDDS survey
+food records. It converts source records into canonical recipe objects, applies
 label-style transformations, renders ingredient and Nutrition Facts text, validates the
-result, and writes benchmark samples with ground truth for parsing and mapping tasks.
+result, and writes sample directories with ground truth. Parser, mapper, model, and
+downstream benchmark evaluation work belongs in the later NIP-M workflow.
 
 ## Repository Layout
 
@@ -14,10 +16,11 @@ result, and writes benchmark samples with ground truth for parsing and mapping t
 - `src/synth_bench/llm/`: deterministic label rendering and optional LLM refinement.
 - `src/synth_bench/validation/`: validation rules and report generation.
 - `src/synth_bench/pipeline/`: dataset generation and splitting.
-- `src/synth_bench/benchmark/`: baseline parsers/mappers and evaluation metrics.
-- `scripts/example_generate_and_evaluate.py`: end-to-end generation and evaluation example.
+- `src/synth_bench/benchmark/`: reference-only baseline utilities for development smoke checks.
+- `scripts/generate_benchmark.py`: end-to-end dataset generation example.
 - `docs/DATASET_SCHEMA.md`: generated dataset file layout.
 - `docs/SMOKE_TEST.md`: latest real-FNDDS smoke test notes.
+- `docs/PROJECT_SCOPE.md`: current project boundary and next priorities.
 
 ## Requirements
 
@@ -56,12 +59,12 @@ uv run pytest -q
 
 GitHub Actions runs the same checks on `main` and pull requests.
 
-## Generate and Evaluate a Small Dataset
+## Generate a Small Dataset
 
 Use the example script with an FNDDS survey JSON:
 
 ```bash
-uv run python scripts/example_generate_and_evaluate.py \
+uv run python scripts/generate_benchmark.py \
   --fndds-path ../db/FoodData_Central_survey_food_json_2024-10-31/surveyDownload.json \
   --output-dir data/example_benchmark \
   --n-samples 20 \
@@ -76,8 +79,7 @@ The script:
 3. Generates and validates benchmark samples.
 4. Writes sample directories and `samples.csv`.
 5. Creates train/validation/test split files.
-6. Runs regex parsing and dictionary mapping baselines.
-7. Writes `evaluation_summary.json`.
+6. Writes `generation_summary.json`.
 
 ## Programmatic Usage
 
@@ -126,5 +128,5 @@ See `docs/SMOKE_TEST.md` for the latest real-FNDDS smoke test result.
 - Nutrition Facts values use simplified rounding and nutrient-name mappings.
 - Allergen detection is keyword/ontology based, not a full ingredient derivation parser.
 - Optional LLM refinement is guarded, but deterministic template rendering is the default.
-- Mapping evaluation currently targets canonical FNDDS ingredient descriptions for the
-  built-in baselines, while numeric ingredient codes are retained in `ground_truth.json`.
+- Reference baseline parser/mapper utilities are not a project deliverable; they are retained only
+  for local smoke checks. NIP-M owns parsing, mapping, and downstream model evaluation.

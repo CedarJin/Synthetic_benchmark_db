@@ -7,7 +7,7 @@ plus index and manifest files.
 dataset_root/
   manifest.json
   samples.csv
-  evaluation_summary.json        # only when produced by the example script
+  generation_summary.json        # only when produced by the example script
   splits/
     train.txt
     val.txt
@@ -58,7 +58,7 @@ The source recipe after FNDDS loading:
 
 `ground_truth.json`
 
-Ground truth used for benchmark evaluation:
+Ground truth for downstream NIP-M evaluation:
 
 - Original canonical food.
 - Canonical mappings to numeric FNDDS ingredient codes.
@@ -79,7 +79,8 @@ Structured label data after transformation:
 
 `rendered_label.txt`
 
-Final rendered ingredient label text. This is the primary input for parsing systems.
+Final rendered ingredient label text. This is the primary text artifact handed to downstream
+parsing systems.
 
 `nutrition_facts.json`
 
@@ -104,8 +105,8 @@ records.
 Difficulty is assigned from operators that actually changed ingredients or produced label
 artifacts. A sample with no effective transformations remains `EASY`.
 
-## Evaluation Namespace
+## Handoff Namespace
 
-Parsing evaluation uses declared ingredient names. Mapping evaluation for built-in baselines
-uses canonical FNDDS ingredient descriptions as targets. Numeric ingredient codes remain
-available through `ground_truth.canonical_mappings`.
+The dataset keeps both declared label names and canonical FNDDS ingredient identifiers so NIP-M can
+evaluate parsing and mapping later. This repository generates and documents those fields, but does
+not define the downstream parsing or mapping algorithms.
