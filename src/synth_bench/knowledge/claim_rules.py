@@ -141,6 +141,16 @@ class SourceClaim:
     level: str  # "good_source" or "excellent_source"
 
 
+SOURCE_CLAIM_DISPLAY_NAMES: dict[str, str] = {
+    "Protein": "PROTEIN",
+    "Fiber, total dietary": "DIETARY FIBER",
+    "Vitamin D (D2 + D3)": "VITAMIN D",
+    "Calcium, Ca": "CALCIUM",
+    "Iron, Fe": "IRON",
+    "Potassium, K": "POTASSIUM",
+}
+
+
 def check_source_claims(
     nutrient_amounts_per_serving: dict[str, float],
 ) -> list[str]:
@@ -157,13 +167,16 @@ def check_source_claims(
     """
     claims: list[str] = []
     for nutrient_name, amount in nutrient_amounts_per_serving.items():
+        display_name = SOURCE_CLAIM_DISPLAY_NAMES.get(nutrient_name)
+        if display_name is None:
+            continue
         dv_pct = compute_daily_value_percent(nutrient_name, amount)
         if dv_pct is None:
             continue
         if dv_pct >= 20:
-            claims.append(f"EXCELLENT SOURCE OF {nutrient_name.split(',')[0].upper()}")
+            claims.append(f"EXCELLENT SOURCE OF {display_name}")
         elif dv_pct >= 10:
-            claims.append(f"GOOD SOURCE OF {nutrient_name.split(',')[0].upper()}")
+            claims.append(f"GOOD SOURCE OF {display_name}")
     return claims
 
 

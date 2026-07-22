@@ -42,6 +42,7 @@ but it should not drive this repository's roadmap.
 The core generation pipeline is in a good state for the current scope:
 
 - Real FNDDS smoke generation works.
+- A 200-sample `benchmark_v0.1` pilot generation completed with 200/200 validation passing.
 - Dataset directories include the expected canonical, rendered, validation, metadata, and ground
   truth files.
 - Validation now runs after final rendering.
@@ -64,9 +65,8 @@ for NIP-M as long as the generated artifacts and ground truth are stable and wel
 
 ## Recommended Next Work
 
-1. Generate and inspect a larger real-FNDDS pilot dataset using `configs/benchmark_v0.1.yaml`.
-2. Add a dataset card documenting source data, generation settings, validation coverage, and known
+1. Add a dataset card documenting source data, generation settings, validation coverage, and known
    limitations.
-3. Add regression fixtures for representative generated samples.
-4. Stabilize the ground-truth schema for the NIP-M handoff.
-5. Package a release artifact with manifest, schema version, and checksums.
+2. Add regression fixtures for representative generated samples.
+3. Stabilize the ground-truth schema for the NIP-M handoff.
+4. Package a release artifact with manifest, schema version, and checksums.

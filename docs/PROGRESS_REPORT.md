@@ -82,8 +82,10 @@ Real FNDDS smoke tests:
 
 - 20-sample smoke test: 20/20 generated, 20/20 validation passed.
 - 50-sample smoke test: 50/50 generated, 50/50 validation passed.
+- 200-sample `benchmark_v0.1` pilot: 200/200 generated, 200/200 validation passed.
 
 The latest 50-sample smoke test is documented in `docs/SMOKE_TEST.md`.
+The 200-sample pilot review is documented in `docs/PILOT_V0.1_REVIEW.md`.
 
 ## Problems Encountered
 
@@ -144,6 +146,17 @@ Prohibited terminology:
   fresh pork or imitation vanilla extract.
 - Those broad terms were removed from the global prohibited-term list.
 
+Pilot dataset inspection:
+
+- The 200-sample `benchmark_v0.1` pilot exposed an invalid generic-name substitution where
+  `Butter oil, anhydrous` could become `LETTUCE`.
+- Ambiguous single-word generic mappings were removed or made more specific.
+- `GenericNameOperator` now only accepts single-word substitutions when the declared name also
+  contains the target ingredient category.
+- Source claims are now limited to suitable positive nutrients instead of generating claims such as
+  `EXCELLENT SOURCE OF SODIUM`, `EXCELLENT SOURCE OF TOTAL LIPID (FAT)`, or
+  `EXCELLENT SOURCE OF FATTY ACIDS`.
+
 ## Remaining Issues
 
 Under the current project boundary, parser and mapper quality are not blocking issues for this
@@ -151,7 +164,6 @@ repository. Those are downstream NIP-M responsibilities.
 
 The main remaining work is dataset release readiness:
 
-- Generate and inspect a larger real-FNDDS pilot dataset with `configs/benchmark_v0.1.yaml`.
 - Add a dataset card covering source data, generation settings, validation coverage, and known
   limitations.
 - Add regression fixtures from representative generated samples.
@@ -163,9 +175,8 @@ The main remaining work is dataset release readiness:
 
 ## Recommended Next Step
 
-Create the first release-oriented dataset generation workflow:
+Create the first release-oriented documentation and fixture set:
 
-1. Run a larger real-FNDDS pilot generation with `configs/benchmark_v0.1.yaml`.
-2. Inspect generated labels, validation reports, and ground truth files.
-3. Add a dataset card and fixture snapshots from representative samples.
-4. Freeze the schema contract that NIP-M will consume next.
+1. Add a dataset card for `benchmark_v0.1`.
+2. Add fixture snapshots from representative generated samples.
+3. Freeze the schema contract that NIP-M will consume next.

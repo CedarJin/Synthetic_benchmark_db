@@ -205,6 +205,32 @@ class TestGenericNameOperator:
         state = op.apply(state)
         assert state.declared_ingredients[0].declared_name == "CHEESE"
 
+    def test_butter_oil_does_not_become_lettuce(self) -> None:
+        ing = CanonicalIngredient(
+            ingredient_code=1,
+            description="Butter oil, anhydrous",
+            weight_g=5.0,
+            fraction=0.1,
+            sequence_number=1,
+        )
+        food = CanonicalFood(fdc_id=1, food_name="Test", ingredients=[ing])
+        state = GenericNameOperator().apply(LabelState.from_canonical_food(food))
+
+        assert state.declared_ingredients[0].declared_name == "BUTTER OIL, ANHYDROUS"
+
+    def test_multi_word_variety_to_generic_name(self) -> None:
+        ing = CanonicalIngredient(
+            ingredient_code=1,
+            description="Granny Smith apples",
+            weight_g=50.0,
+            fraction=0.5,
+            sequence_number=1,
+        )
+        food = CanonicalFood(fdc_id=1, food_name="Test", ingredients=[ing])
+        state = GenericNameOperator().apply(LabelState.from_canonical_food(food))
+
+        assert state.declared_ingredients[0].declared_name == "APPLES"
+
     def test_no_change_for_unknown(self, canonical_milk: CanonicalFood) -> None:
         op = GenericNameOperator()
         state = LabelState.from_canonical_food(canonical_milk)

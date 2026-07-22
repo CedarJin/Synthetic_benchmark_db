@@ -92,6 +92,18 @@ class TestSourceClaims:
         claims = check_source_claims({"Unknown Nutrient": 100})
         assert len(claims) == 0
 
+    def test_sodium_does_not_generate_source_claim(self) -> None:
+        claims = check_source_claims({"Sodium, Na": 1000})
+        assert not any("SOURCE OF SODIUM" in c for c in claims)
+
+    def test_fat_does_not_generate_source_claim(self) -> None:
+        claims = check_source_claims({"Total lipid (fat)": 50})
+        assert not any("SOURCE OF TOTAL LIPID" in c for c in claims)
+
+    def test_vitamin_d_display_name(self) -> None:
+        claims = check_source_claims({"Vitamin D (D2 + D3)": 4})
+        assert any("SOURCE OF VITAMIN D" in c for c in claims)
+
 
 class TestHealthClaims:
     """Health claim eligibility tests."""

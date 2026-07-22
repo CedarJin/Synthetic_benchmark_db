@@ -58,6 +58,9 @@ class TestGenericNames:
     def test_granny_smith_to_apples(self) -> None:
         assert make_generic("Granny Smith") == "APPLES"
 
+    def test_butter_is_not_generic_lettuce(self) -> None:
+        assert make_generic("Butter") == "Butter"
+
     def test_unknown_returns_original(self) -> None:
         assert make_generic("Some Unique Variety") == "Some Unique Variety"
 
