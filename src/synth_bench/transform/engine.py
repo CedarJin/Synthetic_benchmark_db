@@ -57,6 +57,10 @@ class LabelState:
     def from_canonical_food(cls, food: CanonicalFood, **config: Any) -> LabelState:
         """Initialize LabelState from a CanonicalFood."""
         product_name = food.food_name.upper()
+        ingredients = sorted(
+            (ing for ing in food.ingredients if not ing.is_fortificant),
+            key=lambda ing: (-ing.fraction, ing.sequence_number),
+        )
         declared = [
             DeclaredIngredient(
                 original_description=ing.description,
@@ -65,8 +69,7 @@ class LabelState:
                 original_code=ing.ingredient_code,
                 original_fraction=ing.fraction,
             )
-            for ing in food.ingredients
-            if not ing.is_fortificant
+            for ing in ingredients
         ]
         return cls(
             canonical_food=food,

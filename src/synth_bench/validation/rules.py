@@ -79,42 +79,55 @@ class IngredientPreservationRule(BaseValidator):
 
 
 class IngredientOrderRule(BaseValidator):
-    """Verify that ingredient order in the label matches FNDDS sequence.
+    """Verify that ingredient order follows label weight conventions.
 
     Checks:
-      - Main list ingredient positions follow the original sequence.
-      - ≤2% group ingredients are at the correct end of the list.
+      - Main list ingredient fractions are non-increasing.
+      - ≤2% group ingredients are below the grouping threshold.
+      - The ≤2% group is not heavier than any main-list ingredient.
     """
 
     name: str = "ingredient_order"
-    description: str = "Verify ingredient order matches FNDDS sequence"
+    description: str = "Verify ingredient order follows descending fraction order"
+    DEFAULT_LT2_THRESHOLD: float = 0.02
+    FRACTION_TOLERANCE: float = 1e-9
 
     def validate(self, sample: BenchmarkSample) -> ValidationResult:
-        # Build position map from canonical food
-        pos_map: dict[str, int] = {}
-        for ing in sample.canonical_food.ingredients:
-            pos_map[ing.description] = ing.sequence_number
-
         violations: list[str] = []
-        prev_pos = -1
+        prev_fraction = float("inf")
         for i, declared_ing in enumerate(sample.structured_label.ingredient_list):
-            canon_pos = pos_map.get(declared_ing.original_description)
-            if canon_pos is not None:
-                if canon_pos < prev_pos:
-                    violations.append(
-                        f"Position {i}: '{declared_ing.original_description}' "
-                        f"(seq={canon_pos}) after previous seq={prev_pos}"
-                    )
-                prev_pos = canon_pos
+            current_fraction = declared_ing.original_fraction
+            if current_fraction > prev_fraction + self.FRACTION_TOLERANCE:
+                violations.append(
+                    f"Position {i}: '{declared_ing.original_description}' "
+                    f"fraction={current_fraction:.4f} after previous fraction={prev_fraction:.4f}"
+                )
+            prev_fraction = min(prev_fraction, current_fraction)
 
-        # Check ≤2% group — should contain the lowest-fraction ingredients
+        # Check ≤2% group — should contain only low-fraction ingredients.
         if sample.structured_label.two_percent_group:
             main_fracs = [ing.original_fraction for ing in sample.structured_label.ingredient_list]
             lt_fracs = [ing.original_fraction for ing in sample.structured_label.two_percent_group]
+            threshold = _operator_config_value(
+                sample,
+                operator_name="less_than_2_pct",
+                key="threshold",
+                default=self.DEFAULT_LT2_THRESHOLD,
+            )
+            oversized = [
+                ing.original_description
+                for ing in sample.structured_label.two_percent_group
+                if ing.original_fraction > threshold + self.FRACTION_TOLERANCE
+            ]
+            if oversized:
+                violations.append(
+                    f"≤2% group has ingredients above threshold {threshold:.3f}: "
+                    f"{', '.join(oversized)}"
+                )
             if lt_fracs and main_fracs:
                 max_lt = max(lt_fracs)
                 min_main = min(main_fracs)
-                if max_lt > min_main:
+                if max_lt > min_main + self.FRACTION_TOLERANCE:
                     violations.append(
                         f"≤2% group has fraction {max_lt:.3f} which is > "
                         f"main group min {min_main:.3f}"
@@ -131,6 +144,20 @@ class IngredientOrderRule(BaseValidator):
         )
 
 
+def _operator_config_value(
+    sample: BenchmarkSample,
+    operator_name: str,
+    key: str,
+    default: float,
+) -> float:
+    for record in sample.metadata.operator_records:
+        if record.operator_name == operator_name and key in record.config:
+            value = record.config[key]
+            if isinstance(value, int | float):
+                return float(value)
+    return default
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # FDA Syntax Rule
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -138,12 +165,10 @@ class IngredientOrderRule(BaseValidator):
 
 # Common FDA-prohibited or discouraged terms on food labels
 PROHIBITED_TERMS: list[re.Pattern] = [
-    re.compile(r"\bfresh\b", re.I),  # "fresh" restricted for raw/unprocessed
     re.compile(r"\bnatural\b", re.I),  # "natural" has strict FSIS/FDA rules
     re.compile(r"\bwholesome\b", re.I),
     re.compile(r"\bhealthful\b", re.I),
     re.compile(r"\borganic\b", re.I),  # "organic" requires USDA certification
-    re.compile(r"\bimitation\b", re.I),  # "imitation" must follow specific rules
     re.compile(r"\bcure\b", re.I),  # disease claim
     re.compile(r"\bmiracle\b", re.I),
     re.compile(r"\bguaranteed\b", re.I),
@@ -239,20 +264,24 @@ class AllergenDeclarationRule(BaseValidator):
 
         declared: set[str] = set()
         if sample.structured_label.allergens is not None:
+            structured_declared = set(sample.structured_label.allergens.allergens)
+            declared.update(structured_declared)
             decl_text = sample.structured_label.allergens.declaration_text.lower()
             for allergen in [
-                "milk",
-                "eggs",
-                "fish",
                 "crustacean shellfish",
                 "tree nuts",
-                "peanuts",
-                "wheat",
                 "soybeans",
+                "peanuts",
                 "sesame",
+                "milk",
+                "eggs",
+                "wheat",
+                "fish",
             ]:
-                if allergen in decl_text:
+                if re.search(rf"(?<![a-z0-9]){re.escape(allergen)}(?![a-z0-9])", decl_text):
                     declared.add(allergen)
+            if "fish" not in structured_declared and "crustacean shellfish" in declared:
+                declared.discard("fish")
 
         missing_declaration = detected - declared
         false_declaration = declared - detected
@@ -303,7 +332,14 @@ class ClaimEligibilityRule(BaseValidator):
     def validate(self, sample: BenchmarkSample) -> ValidationResult:
         from nusol.core.units import convert_to_per_serving
 
-        serving_size = sample.canonical_food.canonical_serving.serving_size_g
+        from synth_bench.knowledge.fda_rules import determine_serving_size
+
+        food = sample.canonical_food
+        serving_size = determine_serving_size(
+            food_code=food.food_code,
+            food_name=food.food_name,
+            fndds_serving_size_g=food.canonical_serving.serving_size_g,
+        )
 
         # Build per-serving nutrient amounts
         per_serving: dict[str, float] = {}
@@ -316,7 +352,14 @@ class ClaimEligibilityRule(BaseValidator):
             claim_lower = claim.claim_text.lower()
 
             # Check "Free" claims (amount per serving below threshold)
-            if "free" in claim_lower and "fat" in claim_lower:
+            if "saturated fat free" in claim_lower:
+                sat_fat_ps = per_serving.get("Fatty acids, total saturated", 1.0)
+                if sat_fat_ps >= 0.5:
+                    issues.append(
+                        "'Saturated Fat Free' claim but saturated "
+                        f"fat={sat_fat_ps:.1f}g/serving (≥0.5)"
+                    )
+            elif "fat free" in claim_lower:
                 fat_ps = per_serving.get("Total lipid (fat)", 1.0)
                 if fat_ps >= 0.5:
                     issues.append(f"'Fat Free' claim but fat={fat_ps:.1f}g/serving (≥0.5)")
@@ -382,6 +425,9 @@ class NutritionFactsConsistencyRule(BaseValidator):
 
     def validate(self, sample: BenchmarkSample) -> ValidationResult:
         from nusol.core.units import convert_to_per_serving
+        from nusol.utils.numerics import apply_fda_rounding
+
+        from synth_bench.knowledge.fda_rules import determine_serving_size
 
         nf = sample.nutrition_facts_json
         if nf is None:
@@ -392,14 +438,19 @@ class NutritionFactsConsistencyRule(BaseValidator):
                 details={},
             )
 
-        sv = sample.canonical_food.canonical_serving.serving_size_g
+        food = sample.canonical_food
+        sv = determine_serving_size(
+            food_code=food.food_code,
+            food_name=food.food_name,
+            fndds_serving_size_g=food.canonical_serving.serving_size_g,
+        )
         issues: list[str] = []
 
         # Helper: get per-serving rounded value
         def _ps(name: str) -> float | None:
             for n in sample.canonical_food.nutrients:
                 if n.name == name:
-                    return convert_to_per_serving(n.amount, sv)
+                    return apply_fda_rounding(convert_to_per_serving(n.amount, sv), name)
             return None
 
         # Check calories

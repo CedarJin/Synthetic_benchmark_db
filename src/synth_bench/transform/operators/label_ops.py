@@ -137,6 +137,7 @@ class ClaimEligibilityOperator(BaseOperator):
         # ── Health claims ──
         health_claim_texts = check_health_claims(per_serving)
         formatted_claims.extend(health_claim_texts)
+        formatted_claims = list(dict.fromkeys(formatted_claims))
 
         # Build ClaimDeclaration objects
         claims_list: list[ClaimDeclaration] = []

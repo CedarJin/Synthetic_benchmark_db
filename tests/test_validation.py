@@ -245,6 +245,97 @@ class TestIngredientOrderRule:
         assert not result.passed
         assert "violation" in result.message.lower()
 
+    def test_equal_fractions_can_ignore_sequence_order(self) -> None:
+        """Equal-weight ingredients may appear in either FNDDS sequence order."""
+        food = CanonicalFood(
+            fdc_id=10,
+            food_name="Equal Fraction Food",
+            ingredients=[
+                CanonicalIngredient(
+                    ingredient_code=1,
+                    description="Ingredient A",
+                    weight_g=50.0,
+                    fraction=0.5,
+                    sequence_number=1,
+                ),
+                CanonicalIngredient(
+                    ingredient_code=2,
+                    description="Ingredient B",
+                    weight_g=50.0,
+                    fraction=0.5,
+                    sequence_number=2,
+                ),
+            ],
+        )
+        sample = BenchmarkSample(
+            metadata=SampleMetadata(sample_id="equal_fraction"),
+            canonical_food=food,
+            ground_truth=GroundTruth(canonical_food=food),
+            structured_label=StructuredLabel(
+                ingredient_list=[
+                    DeclaredIngredient(
+                        original_description="Ingredient B",
+                        declared_name="INGREDIENT B",
+                        original_code=2,
+                        original_fraction=0.5,
+                    ),
+                    DeclaredIngredient(
+                        original_description="Ingredient A",
+                        declared_name="INGREDIENT A",
+                        original_code=1,
+                        original_fraction=0.5,
+                    ),
+                ],
+            ),
+        )
+        result = IngredientOrderRule().validate(sample)
+        assert result.passed
+
+    def test_fraction_increase_fails(self) -> None:
+        food = CanonicalFood(
+            fdc_id=11,
+            food_name="Wrong Fraction Food",
+            ingredients=[
+                CanonicalIngredient(
+                    ingredient_code=1,
+                    description="Ingredient A",
+                    weight_g=40.0,
+                    fraction=0.4,
+                    sequence_number=1,
+                ),
+                CanonicalIngredient(
+                    ingredient_code=2,
+                    description="Ingredient B",
+                    weight_g=60.0,
+                    fraction=0.6,
+                    sequence_number=2,
+                ),
+            ],
+        )
+        sample = BenchmarkSample(
+            metadata=SampleMetadata(sample_id="wrong_fraction"),
+            canonical_food=food,
+            ground_truth=GroundTruth(canonical_food=food),
+            structured_label=StructuredLabel(
+                ingredient_list=[
+                    DeclaredIngredient(
+                        original_description="Ingredient A",
+                        declared_name="INGREDIENT A",
+                        original_code=1,
+                        original_fraction=0.4,
+                    ),
+                    DeclaredIngredient(
+                        original_description="Ingredient B",
+                        declared_name="INGREDIENT B",
+                        original_code=2,
+                        original_fraction=0.6,
+                    ),
+                ],
+            ),
+        )
+        result = IngredientOrderRule().validate(sample)
+        assert not result.passed
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # FDA Syntax Rule
@@ -362,6 +453,37 @@ class TestAllergenDeclarationRule:
         result = rule.validate(sample)
         assert result.passed
 
+    def test_shellfish_declaration_does_not_imply_fish(self) -> None:
+        ing = CanonicalIngredient(
+            ingredient_code=1,
+            description="Crustaceans, shrimp, cooked",
+            weight_g=100.0,
+            fraction=1.0,
+            sequence_number=1,
+        )
+        food = CanonicalFood(fdc_id=8, food_name="Shrimp", ingredients=[ing])
+        sample = BenchmarkSample(
+            metadata=SampleMetadata(sample_id="shrimp"),
+            canonical_food=food,
+            ground_truth=GroundTruth(canonical_food=food),
+            structured_label=StructuredLabel(
+                ingredient_list=[
+                    DeclaredIngredient(
+                        original_description="Crustaceans, shrimp, cooked",
+                        declared_name="SHRIMP",
+                        original_code=1,
+                        original_fraction=1.0,
+                    )
+                ],
+                allergens=AllergenDeclaration(
+                    allergens=["crustacean shellfish"],
+                    declaration_text="CONTAINS: CRUSTACEAN SHELLFISH",
+                ),
+            ),
+        )
+        result = AllergenDeclarationRule().validate(sample)
+        assert result.passed
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Claim Eligibility Rule
@@ -432,7 +554,7 @@ class TestNutritionFactsConsistencyRule:
         )
         nf = NutritionFactsPanel(
             serving_size="100g",
-            calories=387,
+            calories=390,
             total_fat=0.0,
             sodium=0.0,
             total_carbohydrate=100.0,
@@ -468,3 +590,8 @@ class TestProhibitedTerminologyRule:
         rule = ProhibitedTerminologyRule()
         result = rule.validate(simple_sample)
         assert not result.passed
+
+    def test_imitation_ingredient_descriptor_passes(self, simple_sample: BenchmarkSample) -> None:
+        simple_sample.rendered_label_text = "INGREDIENTS: IMITATION VANILLA EXTRACT."
+        result = ProhibitedTerminologyRule().validate(simple_sample)
+        assert result.passed
