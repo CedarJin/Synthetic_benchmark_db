@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Python checks
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout benchmark repo
+        uses: actions/checkout@v4
+        with:
+          path: Synthetic_benchmark_db
+
+      - name: Checkout NuSol-T sibling dependency
+        uses: actions/checkout@v4
+        with:
+          repository: CedarJin/NuSol-T
+          path: NuSol-T
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: Synthetic_benchmark_db/uv.lock
+
+      - name: Install dependencies
+        working-directory: Synthetic_benchmark_db
+        run: uv sync --all-groups
+
+      - name: Ruff
+        working-directory: Synthetic_benchmark_db
+        run: uv run ruff check src tests
+
+      - name: Mypy
+        working-directory: Synthetic_benchmark_db
+        run: uv run mypy src --no-error-summary
+
+      - name: Pytest
+        working-directory: Synthetic_benchmark_db
+        run: uv run pytest -q
