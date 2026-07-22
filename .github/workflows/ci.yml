@@ -40,11 +40,11 @@ jobs:
 
       - name: Ruff
         working-directory: Synthetic_benchmark_db
-        run: uv run ruff check src tests
+        run: uv run ruff check src tests scripts
 
       - name: Mypy
         working-directory: Synthetic_benchmark_db
-        run: uv run mypy src --no-error-summary
+        run: uv run mypy src scripts --no-error-summary
 
       - name: Pytest
         working-directory: Synthetic_benchmark_db
