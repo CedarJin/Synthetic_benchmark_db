@@ -156,6 +156,10 @@ Pilot dataset inspection:
 - Source claims are now limited to suitable positive nutrients instead of generating claims such as
   `EXCELLENT SOURCE OF SODIUM`, `EXCELLENT SOURCE OF TOTAL LIPID (FAT)`, or
   `EXCELLENT SOURCE OF FATTY ACIDS`.
+- FNDDS descriptions with internal commas are normalized into label-safe ingredient names so commas
+  in rendered labels mostly represent ingredient boundaries.
+- Allergen declarations now render as separate statements instead of comma-attached ingredient-list
+  items.
 
 ## Remaining Issues
 

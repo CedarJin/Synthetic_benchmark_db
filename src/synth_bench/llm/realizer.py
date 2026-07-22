@@ -52,15 +52,15 @@ def _render_ingredient_list(label: StructuredLabel) -> str:
         lt_texts = [ing.declared_name for ing in label.two_percent_group]
         parts.append(f"CONTAINS 2% OR LESS OF: {', '.join(lt_texts)}")
 
-    # Allergen declaration
-    if label.allergens is not None:
-        parts.append(label.allergens.declaration_text)
-
     full_text = ", ".join(parts)
 
     # Ensure proper casing: "INGREDIENTS: ..."
     if not full_text.startswith("INGREDIENTS"):
         full_text = f"INGREDIENTS: {full_text}."
+
+    # Allergen declaration is a separate statement, not another comma-delimited ingredient.
+    if label.allergens is not None:
+        full_text = f"{full_text} {label.allergens.declaration_text}."
 
     return full_text
 

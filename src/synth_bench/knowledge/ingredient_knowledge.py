@@ -25,6 +25,7 @@ STANDARD_TO_COMMERCIAL: dict[str, str] = {
     "Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)": "NONFAT MILK",
     "Milk, NFS": "MILK",
     "Milk, buttermilk, fluid, cultured, lowfat": "BUTTERMILK",
+    "Yogurt, Greek, plain, nonfat": "NONFAT GREEK YOGURT",
     "Cheese, cheddar": "CHEDDAR CHEESE",
     "Cheese, mozzarella, low moisture, part skim": "MOZZARELLA CHEESE",
     "Cheese, parmesan, grated": "PARMESAN CHEESE",
@@ -40,6 +41,7 @@ STANDARD_TO_COMMERCIAL: dict[str, str] = {
     "Ice cream, chocolate": "CHOCOLATE ICE CREAM",
     "Butter, salted": "BUTTER",
     "Butter, without salt": "BUTTER",
+    "Butter oil, anhydrous": "BUTTER OIL",
     "Whipped cream, pressurized": "WHIPPED CREAM",
     # ── Grains ──
     "Wheat flour, all-purpose, enriched, bleached": "ENRICHED WHEAT FLOUR",
@@ -60,6 +62,7 @@ STANDARD_TO_COMMERCIAL: dict[str, str] = {
     "Noodles, egg, cooked, enriched, without added salt": "EGG NOODLES",
     # ── Sweeteners ──
     "Sugar, granulated": "SUGAR",
+    "Sugars, granulated": "SUGAR",
     "Sugar, brown": "BROWN SUGAR",
     "Sugar, powdered": "POWDERED SUGAR",
     "Syrup, maple": "MAPLE SYRUP",
@@ -176,6 +179,8 @@ STANDARD_TO_COMMERCIAL: dict[str, str] = {
     "Vinegar, distilled": "VINEGAR",
     # ── Additives ──
     "Water, tap": "WATER",
+    "Beverages, water, tap, drinking": "WATER",
+    "Beverages, water, tap, municipal": "WATER",
     "Water, bottled, generic": "WATER",
     "Vital wheat gluten": "WHEAT GLUTEN",
     "Xanthan gum": "XANTHAN GUM",
@@ -517,7 +522,20 @@ def lookup_commercial_name(fndds_name: str) -> str:
     Returns:
         Commercial label name, or the original if not found.
     """
-    return STANDARD_TO_COMMERCIAL.get(fndds_name, fndds_name.upper())
+    return STANDARD_TO_COMMERCIAL.get(fndds_name, normalize_label_ingredient_name(fndds_name))
+
+
+def normalize_label_ingredient_name(fndds_name: str) -> str:
+    """Convert an FNDDS description into a comma-free label-safe ingredient name.
+
+    Exact commercial mappings should be preferred whenever available. This fallback removes
+    FNDDS's comma-delimited descriptor style so commas in rendered labels mostly represent
+    ingredient boundaries.
+    """
+    normalized = re.sub(r"\s+", " ", fndds_name).strip()
+    normalized = re.sub(r"\s*,\s*", " ", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
+    return normalized.upper()
 
 
 def make_generic(specific_name: str) -> str:

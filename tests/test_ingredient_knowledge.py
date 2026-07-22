@@ -12,6 +12,7 @@ from synth_bench.knowledge.ingredient_knowledge import (
     expand_compound,
     lookup_commercial_name,
     make_generic,
+    normalize_label_ingredient_name,
 )
 
 
@@ -31,9 +32,22 @@ class TestCommercialNames:
         assert result == "SUGAR"
 
     def test_lookup_unknown_falls_back(self) -> None:
-        """Unknown names should fall back to UPPERCASE of the original."""
+        """Unknown names should fall back to a comma-free label-safe form."""
         result = lookup_commercial_name("Some exotic ingredient, raw")
-        assert result == "SOME EXOTIC INGREDIENT, RAW"
+        assert result == "SOME EXOTIC INGREDIENT RAW"
+
+    def test_lookup_fndds_yogurt_description(self) -> None:
+        result = lookup_commercial_name("Yogurt, Greek, plain, nonfat")
+        assert result == "NONFAT GREEK YOGURT"
+
+    def test_lookup_fndds_water_description(self) -> None:
+        result = lookup_commercial_name("Beverages, water, tap, drinking")
+        assert result == "WATER"
+
+    def test_normalize_label_ingredient_name_removes_internal_commas(self) -> None:
+        result = normalize_label_ingredient_name("Flour, wheat, all-purpose, enriched, bleached")
+        assert result == "FLOUR WHEAT ALL-PURPOSE ENRICHED BLEACHED"
+        assert "," not in result
 
     def test_lookup_egg(self) -> None:
         result = lookup_commercial_name("Egg, whole, raw")

@@ -172,11 +172,12 @@ class TestRenameOperator:
         state.declared_ingredients.append(
             DeclaredIngredient(
                 original_description="Some exotic ingredient, raw",
-                declared_name="SOME EXOTIC INGREDIENT, RAW",
+                declared_name="SOME EXOTIC INGREDIENT RAW",
             )
         )
         state = op.apply(state)
         assert "EXOTIC" in state.declared_ingredients[-1].declared_name
+        assert "," not in state.declared_ingredients[-1].declared_name
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -214,9 +215,11 @@ class TestGenericNameOperator:
             sequence_number=1,
         )
         food = CanonicalFood(fdc_id=1, food_name="Test", ingredients=[ing])
-        state = GenericNameOperator().apply(LabelState.from_canonical_food(food))
+        state = LabelState.from_canonical_food(food)
+        RenameOperator().apply(state)
+        state = GenericNameOperator().apply(state)
 
-        assert state.declared_ingredients[0].declared_name == "BUTTER OIL, ANHYDROUS"
+        assert state.declared_ingredients[0].declared_name == "BUTTER OIL"
 
     def test_multi_word_variety_to_generic_name(self) -> None:
         ing = CanonicalIngredient(

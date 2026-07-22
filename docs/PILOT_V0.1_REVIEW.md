@@ -40,10 +40,12 @@ Aggregate artifact checks:
 - Validation failures: 0.
 - Bad source-claim patterns found after fixes: 0.
 - Lettuce mismatches after fixes: 0.
+- Non-compound declared ingredient names with internal commas after fixes: 0.
+- Labels with comma-attached allergen declarations after fixes: 0.
 
 ## Issues Found And Fixed
 
-Two data-quality issues surfaced during inspection.
+Three data-quality issues surfaced during inspection.
 
 First, the generic-name operator could map `Butter oil, anhydrous` to `LETTUCE`. The root cause was
 an ambiguous single-word mapping, `Butter -> LETTUCE`, combined with unconstrained word-level
@@ -56,7 +58,13 @@ Second, source claims were generated for nutrients that should not be promoted a
 acids, and carbohydrate. The fix restricts source claims to a whitelist of suitable display
 nutrients: protein, dietary fiber, vitamin D, calcium, iron, and potassium.
 
-Regression tests were added for both issues.
+Third, FNDDS ingredient descriptions with internal commas were being used directly as label
+ingredient names, making text such as `YOGURT, GREEK, PLAIN, NONFAT` look like four separate
+ingredients. The fix added comma-free label-safe ingredient normalization, expanded exact commercial
+name mappings for common FNDDS descriptions, and renders allergen declarations as separate
+sentences instead of comma-attached ingredient-list items.
+
+Regression tests were added for these issues.
 
 ## Remaining Observations
 
@@ -66,8 +74,8 @@ Regression tests were added for both issues.
   acceptable for now, but the release schema should state the nullable behavior explicitly.
 - Health-claim frequency is high in this pilot. The next quality pass should decide whether claims
   should be capped or sampled to improve label diversity.
-- Some FNDDS ingredient names remain long and survey-like. More commercial-name mappings may be
-  needed before release.
+- Some fallback-normalized FNDDS ingredient names may still be long and survey-like. More exact
+  commercial-name mappings may be needed before release.
 
 ## Verification
 
@@ -83,4 +91,4 @@ Latest result:
 
 - `ruff`: passed.
 - `mypy`: passed.
-- `pytest`: 230 passed.
+- `pytest`: 233 passed.

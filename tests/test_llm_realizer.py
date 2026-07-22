@@ -148,6 +148,8 @@ class TestRenderIngredientList:
         )
         text = _render_ingredient_list(label)
         assert "CONTAINS: MILK" in text
+        assert ", CONTAINS: MILK" not in text
+        assert text.endswith(". CONTAINS: MILK.")
 
     def test_empty_ingredients(self) -> None:
         label = StructuredLabel(product_name="")
