@@ -6,10 +6,12 @@ import pytest
 
 from synth_bench.knowledge.ingredient_knowledge import (
     COMPOUND_INGREDIENTS,
+    LABEL_NAME_LEXICON_VERSION,
     STANDARD_TO_COMMERCIAL,
     classify_ingredient,
     detect_allergens,
     expand_compound,
+    load_label_name_lexicon,
     lookup_commercial_name,
     make_generic,
     normalize_label_ingredient_name,
@@ -43,6 +45,17 @@ class TestCommercialNames:
     def test_lookup_fndds_water_description(self) -> None:
         result = lookup_commercial_name("Beverages, water, tap, drinking")
         assert result == "WATER"
+
+    def test_lookup_uses_versioned_lexicon(self) -> None:
+        result = lookup_commercial_name("Chicken, NS as to part, rotisserie, skin not eaten")
+        assert result == "ROTISSERIE CHICKEN"
+
+    def test_label_name_lexicon_loads(self) -> None:
+        lexicon = load_label_name_lexicon()
+        assert LABEL_NAME_LEXICON_VERSION == "0.1"
+        assert lexicon["Flour, wheat, all-purpose, enriched, bleached"] == (
+            "ENRICHED WHEAT FLOUR"
+        )
 
     def test_normalize_label_ingredient_name_removes_internal_commas(self) -> None:
         result = normalize_label_ingredient_name("Flour, wheat, all-purpose, enriched, bleached")

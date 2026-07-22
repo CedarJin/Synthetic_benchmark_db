@@ -1,0 +1,81 @@
+version: "0.1"
+description: >
+  Reviewed label-name lexicon for converting FNDDS ingredient descriptions into
+  concise ingredient declaration names. Candidates can be proposed by AI, but
+  generation uses this fixed file for reproducibility.
+
+mappings:
+  # Dairy
+  Milk, nonfat, fluid, without added vitamin A and vitamin D (fat free or skim): NONFAT MILK
+  Milk, dry, nonfat, regular, without added vitamin A and vitamin D: NONFAT DRY MILK
+  Cream, fluid, light (coffee cream or table cream): LIGHT CREAM
+  Cheese, ricotta, whole milk: RICOTTA CHEESE
+  Cheese, parmesan, grated: PARMESAN CHEESE
+
+  # Grains and starches
+  Flour, wheat, all-purpose, enriched, bleached: ENRICHED WHEAT FLOUR
+  Bread, white, commercially prepared: WHITE BREAD
+  Rice, brown, long-grain, cooked (Includes foods for USDA's Food Distribution Program): BROWN RICE
+  Rice, white, glutinous, unenriched, cooked: WHITE RICE
+  Pasta, whole-wheat, cooked (Includes foods for USDA's Food Distribution Program): WHOLE WHEAT PASTA
+
+  # Meat and poultry
+  Chicken, NS as to part, rotisserie, skin not eaten: ROTISSERIE CHICKEN
+  Chicken, NS as to part and cooking method, NS as to skin eaten: CHICKEN
+  Chicken, broilers or fryers, thigh, meat only, cooked, roasted: ROASTED CHICKEN THIGH
+  Chicken, broilers or fryers, wing, meat and skin, cooked, roasted: ROASTED CHICKEN WING
+  Chicken breast, baked, broiled, or roasted, skin not eaten, from raw: CHICKEN BREAST
+  Beef, ground: GROUND BEEF
+  Beef, ground, 75% lean meat / 25% fat, crumbles, cooked, pan-browned: GROUND BEEF
+  Beef, ground, 75% lean meat / 25% fat, loaf, cooked, baked: GROUND BEEF
+  Beef, plate steak, boneless, inside skirt, separable lean and fat, trimmed to 0" fat, all grades, cooked, grilled: BEEF STEAK
+  Beef, round, top round steak, separable lean and fat, trimmed to 1/8" fat, all grades, cooked, broiled: BEEF ROUND STEAK
+  Beef, loin, top loin, separable lean and fat, trimmed to 1/8" fat, all grades, cooked, grilled: BEEF LOIN STEAK
+  Pork, fresh, loin, whole, separable lean only, cooked, roasted: ROASTED PORK LOIN
+  Pork, cured, ham -- water added, whole, boneless, separable lean only, heated, roasted: HAM
+  Turkey, retail parts, thigh, meat and skin, cooked, roasted: ROASTED TURKEY THIGH
+
+  # Seafood
+  Crustaceans, shrimp, mixed species, cooked, moist heat (may contain additives to retain moisture): SHRIMP
+  Crustaceans, shrimp, mixed species, raw (may contain additives to retain moisture): SHRIMP
+  Mollusks, clam, mixed species, canned, drained solids: CLAMS
+  Fish, sardine, Atlantic, canned in oil, drained solids with bone: SARDINES
+
+  # Eggs
+  Eggs, Grade A, Large, egg whole: EGGS
+  Eggs, Grade A, Large, egg yolk: EGG YOLK
+
+  # Vegetables and legumes
+  Beans, kidney, red, mature seeds, cooked, boiled, without salt: KIDNEY BEANS
+  Beans, kidney, all types, mature seeds, cooked, boiled, without salt: KIDNEY BEANS
+  Beans, white, mature seeds, cooked, boiled, without salt: WHITE BEANS
+  Beans, pinto, mature seeds, canned, solids and liquids, low sodium: PINTO BEANS
+  Beans, snap, green, canned, regular pack, drained solids: GREEN BEANS
+  Beans, snap, green, frozen, cooked, boiled, drained without salt: GREEN BEANS
+  Beans, snap, yellow, frozen, cooked, boiled, drained, without salt: YELLOW BEANS
+  Broccoli, frozen, chopped, cooked, boiled, drained, without salt: BROCCOLI
+  Carrots, cooked, boiled, drained, without salt: CARROTS
+  Carrots, frozen, cooked, boiled, drained, without salt: CARROTS
+  Corn, sweet, yellow, frozen, kernels cut off cob, boiled, drained, without salt: CORN
+  Onions, cooked, boiled, drained, without salt: ONIONS
+  Peas, green, frozen, cooked, boiled, drained, without salt: GREEN PEAS
+  Peppers, sweet, green, cooked, boiled, drained, without salt: GREEN PEPPERS
+  Spinach, frozen, chopped or leaf, cooked, boiled, drained, without salt: SPINACH
+  Tomatoes, red, ripe, canned, packed in tomato juice: TOMATOES
+  Tomato products, canned, paste, without salt added (Includes foods for USDA's Food Distribution Program): TOMATO PASTE
+  Tomato products, canned, puree, without salt added: TOMATO PUREE
+  Turnip greens, frozen, cooked, boiled, drained, without salt: TURNIP GREENS
+  Vegetables, mixed, frozen, cooked, boiled, drained, without salt: MIXED VEGETABLES
+
+  # Prepared foods and condiments
+  Salad dressing, italian dressing, commercial, regular: ITALIAN DRESSING
+  Soup, chicken broth, ready-to-serve: CHICKEN BROTH
+  Soup, beef broth or bouillon canned, ready-to-serve: BEEF BROTH
+  Gravy, chicken, canned or bottled, ready-to-serve: CHICKEN GRAVY
+  Margarine, stick: MARGARINE
+  Margarine, regular, 80% fat, composite, stick, with salt: MARGARINE
+  Shake, fast food, vanilla: VANILLA MILK SHAKE
+
+  # Spices and herbs
+  Spices, basil, dried: DRIED BASIL
+  Spices, parsley, dried: DRIED PARSLEY

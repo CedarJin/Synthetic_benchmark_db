@@ -8,6 +8,7 @@
 - [x] Re-scope this repository as benchmark dataset generation only.
 - [x] Replace the default example workflow with generation and validation summary output.
 - [x] Add a versioned generation config under `configs/`.
+- [x] Add a reviewed ingredient-name lexicon v0.1 for label-safe commercial names.
 
 ## Next
 
@@ -19,6 +20,7 @@
 - [x] Generate a larger real-FNDDS pilot dataset and inspect artifact quality.
 - [ ] Add a dataset card with source, generation settings, validation coverage, and limitations.
 - [ ] Add regression fixtures for representative generated JSON/text outputs.
+- [ ] Expand ingredient-name lexicon from the v0.1 audit.
 
 ## Later
 

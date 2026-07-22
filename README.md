@@ -12,6 +12,7 @@ downstream benchmark evaluation work belongs in the later NIP-M workflow.
 
 - `src/synth_bench/canonical/`: FNDDS loading and canonical data models.
 - `src/synth_bench/knowledge/`: FDA, claim, allergen, and ingredient knowledge.
+- `src/synth_bench/knowledge/lexicons/`: versioned ingredient-name lexicons.
 - `src/synth_bench/transform/`: transformation engine and label operators.
 - `src/synth_bench/llm/`: deterministic label rendering and optional LLM refinement.
 - `src/synth_bench/validation/`: validation rules and report generation.
@@ -22,6 +23,7 @@ downstream benchmark evaluation work belongs in the later NIP-M workflow.
 - `docs/DATASET_SCHEMA.md`: generated dataset file layout.
 - `docs/SMOKE_TEST.md`: latest real-FNDDS smoke test notes.
 - `docs/PROJECT_SCOPE.md`: current project boundary and next priorities.
+- `docs/INGREDIENT_NAME_AUDIT_V0.1.md`: ingredient-name normalization audit.
 
 ## Requirements
 

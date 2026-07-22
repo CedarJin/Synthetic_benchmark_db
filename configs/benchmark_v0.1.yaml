@@ -1,5 +1,6 @@
 dataset_version: "0.1"
 dataset_name: "synthetic_benchmark_db_v0.1"
+ingredient_name_lexicon_version: "0.1"
 
 fndds_path: "../db/FoodData_Central_survey_food_json_2024-10-31/surveyDownload.json"
 output_dir: "data/benchmark_v0.1"

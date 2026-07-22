@@ -42,6 +42,8 @@ Aggregate artifact checks:
 - Lettuce mismatches after fixes: 0.
 - Non-compound declared ingredient names with internal commas after fixes: 0.
 - Labels with comma-attached allergen declarations after fixes: 0.
+- Versioned ingredient-name lexicon: `ingredient_names_v0.1.yaml`.
+- Remaining declared names longer than 35 characters after lexicon v0.1: 154.
 
 ## Issues Found And Fixed
 
@@ -64,7 +66,21 @@ ingredients. The fix added comma-free label-safe ingredient normalization, expan
 name mappings for common FNDDS descriptions, and renders allergen declarations as separate
 sentences instead of comma-attached ingredient-list items.
 
+Fourth, many comma-free fallback names were still too survey-like, for example
+`FLOUR WHEAT ALL-PURPOSE ENRICHED BLEACHED` and `CHICKEN NS AS TO PART ROTISSERIE SKIN NOT EATEN`.
+The fix introduced a reviewed versioned lexicon at
+`src/synth_bench/knowledge/lexicons/ingredient_names_v0.1.yaml`. Generation now uses that fixed
+lexicon before falling back to built-in mappings or comma-free normalization.
+
 Regression tests were added for these issues.
+
+Example after lexicon v0.1:
+
+```text
+INGREDIENTS: TOMATO SAUCE, ENRICHED WHEAT FLOUR, GROUND BEEF, CHEESE, EGGS, WATER,
+ONIONS, CONTAINS 2% OR LESS OF: MARGARINE, EGG YOLK, CHEESE, SALT, SUGAR,
+WHITE BREAD, DRIED BASIL, DRIED PARSLEY. CONTAINS: MILK, EGGS and WHEAT.
+```
 
 ## Remaining Observations
 
@@ -74,8 +90,9 @@ Regression tests were added for these issues.
   acceptable for now, but the release schema should state the nullable behavior explicitly.
 - Health-claim frequency is high in this pilot. The next quality pass should decide whether claims
   should be capped or sampled to improve label diversity.
-- Some fallback-normalized FNDDS ingredient names may still be long and survey-like. More exact
-  commercial-name mappings may be needed before release.
+- Some fallback-normalized FNDDS ingredient names remain long and survey-like. The next lexicon
+  expansion should target the 154 remaining names longer than 35 characters and recurring phrases
+  such as `COOKED`, `CANNED`, `WITHOUT SALT`, `SEPARABLE`, and `FAST FOOD`.
 
 ## Verification
 

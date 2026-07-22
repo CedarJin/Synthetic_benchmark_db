@@ -160,6 +160,8 @@ Pilot dataset inspection:
   in rendered labels mostly represent ingredient boundaries.
 - Allergen declarations now render as separate statements instead of comma-attached ingredient-list
   items.
+- A reviewed versioned ingredient-name lexicon v0.1 was added so AI-assisted name proposals can be
+  committed as deterministic mappings before generation.
 
 ## Remaining Issues
 
@@ -171,6 +173,7 @@ The main remaining work is dataset release readiness:
 - Add a dataset card covering source data, generation settings, validation coverage, and known
   limitations.
 - Add regression fixtures from representative generated samples.
+- Expand the ingredient-name lexicon using `docs/INGREDIENT_NAME_AUDIT_V0.1.md`.
 - Decide whether `../NuSol-T` should remain a local path dependency or become a package/Git
   dependency.
 - Re-review FDA rule coverage before treating the benchmark as publication-ready.

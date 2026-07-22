@@ -63,6 +63,9 @@ Config snapshot produced by `scripts/generate_benchmark.py`:
 - `source_config`: checked-in config values loaded from YAML.
 - `effective_config`: final values after command-line overrides.
 
+`source_config` records `ingredient_name_lexicon_version` when a dataset is generated with a
+versioned ingredient-name lexicon.
+
 ## Sample Files
 
 `canonical_food.json`

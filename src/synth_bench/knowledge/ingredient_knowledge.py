@@ -10,6 +10,14 @@ Provides:
 from __future__ import annotations
 
 import re
+from functools import lru_cache
+from importlib import resources
+from typing import Any
+
+import yaml  # type: ignore[import-untyped]
+
+LABEL_NAME_LEXICON_VERSION = "0.1"
+LABEL_NAME_LEXICON_RESOURCE = "lexicons/ingredient_names_v0.1.yaml"
 
 # ── USDA Standard Name → Commercial Label Name ───────────────────────────────
 #
@@ -522,7 +530,32 @@ def lookup_commercial_name(fndds_name: str) -> str:
     Returns:
         Commercial label name, or the original if not found.
     """
-    return STANDARD_TO_COMMERCIAL.get(fndds_name, normalize_label_ingredient_name(fndds_name))
+    lexicon = load_label_name_lexicon()
+    return lexicon.get(
+        fndds_name,
+        STANDARD_TO_COMMERCIAL.get(fndds_name, normalize_label_ingredient_name(fndds_name)),
+    )
+
+
+@lru_cache(maxsize=1)
+def load_label_name_lexicon() -> dict[str, str]:
+    """Load the reviewed versioned ingredient label-name lexicon."""
+    lexicon_path = resources.files(__package__).joinpath(LABEL_NAME_LEXICON_RESOURCE)
+    raw_data = yaml.safe_load(lexicon_path.read_text(encoding="utf-8"))
+    if not isinstance(raw_data, dict):
+        raise ValueError(f"Invalid label-name lexicon: {LABEL_NAME_LEXICON_RESOURCE}")
+
+    version = raw_data.get("version")
+    if version != LABEL_NAME_LEXICON_VERSION:
+        raise ValueError(
+            f"Expected label-name lexicon version {LABEL_NAME_LEXICON_VERSION}, got {version}"
+        )
+
+    mappings: Any = raw_data.get("mappings")
+    if not isinstance(mappings, dict):
+        raise ValueError(f"Missing mappings in label-name lexicon: {LABEL_NAME_LEXICON_RESOURCE}")
+
+    return {str(source): str(label_name) for source, label_name in mappings.items()}
 
 
 def normalize_label_ingredient_name(fndds_name: str) -> str:
